@@ -2,15 +2,8 @@ assert = require 'assert'
 dw = require '../ductwork'
 fs = require 'fs'
 chai = require 'chai'
+
 chai.should
-
-###
-let path = dw.create('/tmp/butts');
-dw.wait(dw.modes.READ).then(() => {
-
-});
-###
-
 
 describe 'Ductwork', ->
   # Windows should prepend "//./pipes" to this
