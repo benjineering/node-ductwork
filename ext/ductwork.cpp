@@ -20,7 +20,7 @@ using namespace Ductwork;
 const mode_t MKFIFO_PERMS = 666; // TODO: mkfifo permissions
 
 Object Ductwork::Init(Env env, Object exports) {
-  exports.Set("create", Function::New(env, Create)); 
+  exports.Set("create", Function::New(env, Create));
   return exports;
 }
 

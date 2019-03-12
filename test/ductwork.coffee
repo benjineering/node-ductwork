@@ -9,11 +9,11 @@ describe 'Ductwork', ->
   # Windows should prepend "//./pipes" to this
   desiredPath = "/tmp/#{Math.random()}.fifo"
   actualPath = null
-
+###
   afterEach -> 
     fs.unlink(actualPath) if (fs.existsSync(actualPath))
     actualPath = null
-  
+###
   describe '#create(path)', ->
     it 'should create a pipe and return the actual path to it', ->
       actualPath = dw.create desiredPath 
