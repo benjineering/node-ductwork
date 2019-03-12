@@ -3,7 +3,7 @@ dw = require '../ductwork'
 fs = require 'fs'
 chai = require 'chai'
 
-chai.should
+chai.should()
 
 describe 'Ductwork', ->
   # Windows should prepend "//./pipes" to this
