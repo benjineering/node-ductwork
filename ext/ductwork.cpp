@@ -15,12 +15,15 @@ using Napi::CallbackInfo;
 using Napi::Function;
 using Napi::TypeError;
 using Napi::Error;
+using Napi::Value;
+using Napi::Promise;
 using namespace Ductwork;
 
 const mode_t MKFIFO_PERMS = 666; // TODO: mkfifo permissions
 
 Object Ductwork::Init(Env env, Object exports) {
   exports.Set("create", Function::New(env, Create));
+  exports.Set("wait", Function::New(env, Wait));
   return exports;
 }
 
@@ -37,6 +40,8 @@ String Ductwork::Create(const CallbackInfo &info) {
 
   // TODO: check if path already exists
 
+  // TODO: move platforms off-world
+
 #ifdef _WIN32
   // TODO: wdoze
 #else
@@ -51,4 +56,10 @@ String Ductwork::Create(const CallbackInfo &info) {
 
   return nPath;
 #endif
+}
+
+Value Ductwork::Wait(const CallbackInfo &info) {
+  Promise::Deferred deferred = Promise::Deferred::New(info.Env());
+  // TODO: wait some
+  return deferred.Promise();
 }

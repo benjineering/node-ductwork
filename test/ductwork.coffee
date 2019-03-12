@@ -29,7 +29,7 @@ describe 'Ductwork', ->
     it 'should return "read"', -> dw.modes.READ_WRITE.should.equal 'read_write'
 
   describe '#wait(path, mode)', ->
-    beforeEach -> actualPath = dw.create desiredPath
+    #beforeEach -> actualPath = dw.create desiredPath
 
     it 'should return a Promise', -> 
       dw.wait(actualPath, dw.modes.READ).should.be.a 'Promise'
