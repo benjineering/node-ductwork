@@ -8,7 +8,7 @@
     "start": "npm run build && npm run test",
     "build": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "test": "mocha --require coffeescript/register 'test/**/*.{js,coffee}'"
+    "test": "mocha \"test/**/*.{js,coffee}\""
   },
   "keywords": [
     "fifo",
