@@ -1,9 +1,10 @@
 #include "../dw_base.h"
+#include <napi.h>
 
 namespace Nix {
   class Ductwork : public DwBase {
   public:
-    Ductwork(std::string path);
+    Ductwork(Napi::Env env, std::string path);
     std::string Create();
   };
 }

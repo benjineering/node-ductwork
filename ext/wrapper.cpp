@@ -37,7 +37,7 @@ String Wrapper::Create(const CallbackInfo &info) {
 
   // TODO: check if path already exists
 
-  Ductwork dw(path); // TODO: stash instance
+  Ductwork dw(env, path); // TODO: stash instance
   std::string actualPath = dw.Create();
 
   return String::New(env, actualPath);

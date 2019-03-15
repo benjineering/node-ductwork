@@ -4,11 +4,12 @@
 #include "ductwork.h"
 
 using std::string;
+using Napi::Env;
 using namespace Nix;
 
 const mode_t MKFIFO_PERMS = 666;
 
-Ductwork::Ductwork(string path) : DwBase(path) { }
+Ductwork::Ductwork(Env env, string path) : DwBase(env, path) { }
 
 string Ductwork::Create() {
   int result = mkfifo(path.c_str(), MKFIFO_PERMS);
@@ -18,7 +19,7 @@ string Ductwork::Create() {
     char *error = strerror(result);
     std::string message("Couldn't mkfifo: ");
     message += error;
-    throw std::runtime_error(message);
+    throwError(message);
   }
 
   return path;

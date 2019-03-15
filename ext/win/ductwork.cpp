@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "ductwork.h"
 
+using Napi::Env;
 using std::string;
 using namespace Win;
 
@@ -18,7 +19,7 @@ const SECURITY_ATTRIBUTES SECURITY_ATTRS = {
   TRUE
 };
 
-Ductwork::Ductwork(string path) : DwBase(path) { }
+Ductwork::Ductwork(Napi env, string path) : DwBase(env, path) { }
 
 string Ductwork::Create() {
   std::string actualPath(PATH_PREFIX);
