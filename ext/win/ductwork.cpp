@@ -59,3 +59,7 @@ string Ductwork::Create() {
 
   return message.c_str();
 }
+
+void Ductwork::Read(void (*callback)(int dataLength)) {
+  
+}

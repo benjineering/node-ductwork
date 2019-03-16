@@ -18,9 +18,14 @@ using Napi::Error;
 using Napi::Value;
 using Napi::Promise;
 
+/*
+ *  TODO: stash instance, maybe pin to env? How dis???
+ */
+Ductwork *dw;
+
 Object Wrapper::Init(Env env, Object exports) {
   exports.Set("create", Function::New(env, Create));
-  exports.Set("wait", Function::New(env, Wait));
+  exports.Set("watch", Function::New(env, Watch));
   return exports;
 }
 
@@ -35,16 +40,16 @@ String Wrapper::Create(const CallbackInfo &info) {
   String nPath = info[0].As<String>();
   std::string path = std::string(nPath);
 
-  // TODO: check if path already exists
-
-  Ductwork dw(env, path); // TODO: stash instance
-  std::string actualPath = dw.Create();
+  dw = new Ductwork(env, path);
+  std::string actualPath = dw->Create();
 
   return String::New(env, actualPath);
 }
 
-Value Wrapper::Wait(const CallbackInfo &info) {
+Value Wrapper::Watch(const CallbackInfo &info) {
   Promise::Deferred deferred = Promise::Deferred::New(info.Env());
-  // TODO: Wait()
+  
+  
+
   return deferred.Promise();
 }

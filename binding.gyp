@@ -9,7 +9,7 @@
         "ext/wrapper.cpp",
         "ext/dw_base.cpp",
         "ext/nix/ductwork.cpp",
-        # "ext/win/ductwork.cpp" # TODO: windows files in gyp
+        # "ext/win/ductwork.cpp" # TODO: windows files in gyp. Maybe 2 gyps?
       ],
       "include_dirs": [
         "<!@(node -p \"require('node-addon-api').include\")"

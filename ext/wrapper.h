@@ -7,7 +7,7 @@
 namespace Wrapper {
   Napi::Object Init(Napi::Env env, Napi::Object exports);
   Napi::String Create(const Napi::CallbackInfo &info);
-  Napi::Value Wait(const Napi::CallbackInfo &info);
+  Napi::Value Watch(const Napi::CallbackInfo &info);
 }
 
 #endif
