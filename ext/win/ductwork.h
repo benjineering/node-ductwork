@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "../dw_base.h"
 #include <napi.h>
 
@@ -9,3 +11,5 @@ namespace Win {
     Napi::Promise Read(char **buffer, size_t bufferSize, bool *timedOut);
   };
 }
+
+#endif

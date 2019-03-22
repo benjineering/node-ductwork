@@ -1,3 +1,5 @@
+#ifndef _WIN32
+
 #include "../dw_base.h"
 #include <napi.h>
 #include <sys/select.h>
@@ -15,3 +17,5 @@ namespace Nix {
     Napi::Promise::Deferred *promise; // TODO: delete this
   };
 }
+
+#endif

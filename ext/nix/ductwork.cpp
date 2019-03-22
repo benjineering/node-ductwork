@@ -1,4 +1,7 @@
+#ifndef _WIN32
+
 #include <fcntl.h>
+
 #include <sys/stat.h>
 #include <thread>
 #include <unistd.h>
@@ -56,3 +59,5 @@ Promise Ductwork::Read(char **buffer, size_t bufferSize, bool *timedOut) {
   fd = 0;
   return readResult;
 }
+
+#endif
