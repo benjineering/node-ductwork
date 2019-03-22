@@ -7,7 +7,6 @@ using std::string;
 DwBase::DwBase(Env env, string path) : env(env), path(path) { }
 
 void DwBase::throwError(string message) {
-  // TODO: different error types?
   Error::New(env, message).ThrowAsJavaScriptException();
 }
 
@@ -16,4 +15,5 @@ void DwBase::throwCreateError(string actualPath, string reason) {
   message += actualPath;
   message += ": ";
   message += reason;
+  throwError(message);
 }

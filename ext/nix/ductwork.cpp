@@ -1,17 +1,18 @@
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/time.h>
-#include <sys/types.h>
+#include <thread>
+#include <unistd.h>
 #include "ductwork.h"
 
 using std::string;
+using std::thread;
 using Napi::Env;
+using Napi::Promise;
 using namespace Nix;
 
 const mode_t CREATE_PERMS = S_IRUSR | S_IWUSR;
 const mode_t READ_PERMS = S_IRUSR | O_RDONLY;
 const mode_t WRITE_PERMS = S_IWUSR | O_WRONLY;
-timeval SELECT_TIMEOUT { 5, 0 }; // 5 secs
 
 Ductwork::Ductwork(Env env, string path) 
 : DwBase(env, path) {
@@ -27,28 +28,31 @@ string Ductwork::Create() {
   return path;
 }
 
-void Ductwork::Read(void (*callback)(int dataLength)) {
+Promise Ductwork::Read(char **buffer, size_t bufferSize, bool *timedOut) {
+  promise = new Promise::Deferred(env);
+  *timedOut = false;
+
   if (fd) {
-    // TODO: handle file already open
+    throwError("File already open");
   }
 
-  fd = open(path.c_str(), READ_PERMS);
+  printf("open started\n");
 
-  if (fd == -1) {
-    // TODO: throw open error
+  printf("open done\n");
+
+  if (fd < 0) {
+    throwError("Error opening file");
   }
 
-  FD_SET(fd, &set);
-  int nfds = fd + 1;
+  size_t readResult = read(fd, *buffer, bufferSize);
 
-  // TODO: watch for exceptions?
+  printf("read done\n");
 
-  int result = select(nfds, &set, NULL, NULL, &SELECT_TIMEOUT);
-
-  if (result == -1) {
-    // TODO: throw watch error
+  if (!readResult) {
+    throwError("Error reading file");
   }
 
-  bool haveData = result && FD_ISSET(fd, &set);
-  callback(haveData);
+  close(fd);
+  fd = 0;
+  return readResult;
 }

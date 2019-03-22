@@ -20,8 +20,8 @@ describe 'Ductwork', ->
       actualPath = dw.create desiredPath 
       fs.existsSync(actualPath).should.be.true
 
-  describe '#read()', ->
+  describe '#readString()', ->
     beforeEach -> actualPath = dw.create desiredPath
 
     it 'should return a promise', ->
-      dw.read().should.be.a 'Promise'
+      dw.readString().should.be.a 'Promise'

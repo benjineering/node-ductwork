@@ -7,10 +7,11 @@ namespace Nix {
   public:
     Ductwork(Napi::Env env, std::string path);
     std::string Create();
-    void Read(void (*callback)(int dataLength));
+    Napi::Promise Read(char **buffer, size_t bufferSize, bool *timedOut);
 
   private:
     int fd;
     fd_set set;
+    Napi::Promise::Deferred *promise; // TODO: delete this
   };
 }

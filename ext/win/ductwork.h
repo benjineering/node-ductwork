@@ -6,6 +6,6 @@ namespace Win {
   public:
     Ductwork(Napi::Env env, std::string path);
     std::string Create();
-    void Read(void (*callback)(int dataLength));
+    Napi::Promise Read(char **buffer, size_t bufferSize, bool *timedOut);
   };
 }

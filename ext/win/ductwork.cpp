@@ -60,6 +60,6 @@ string Ductwork::Create() {
   return message.c_str();
 }
 
-void Ductwork::Read(void (*callback)(int dataLength)) {
+Napi::Promise Ductwork::Read(char **buffer, size_t bufferSize, bool *timedOut) {
   
 }

@@ -17,15 +17,18 @@ using Napi::TypeError;
 using Napi::Error;
 using Napi::Value;
 using Napi::Promise;
+using Napi::Number;
 
 /*
- *  TODO: stash instance, maybe pin to env? How dis???
+ *  TODO: sort out object wrapping
  */
 Ductwork *dw;
+const size_t BUFFER_SIZE = 512;
+char *buffer = (char *)malloc(BUFFER_SIZE);
 
 Object Wrapper::Init(Env env, Object exports) {
   exports.Set("create", Function::New(env, Create));
-  exports.Set("watch", Function::New(env, Watch));
+  exports.Set("readStringSync", Function::New(env, ReadStringSync));
   return exports;
 }
 
@@ -46,10 +49,15 @@ String Wrapper::Create(const CallbackInfo &info) {
   return String::New(env, actualPath);
 }
 
-Value Wrapper::Watch(const CallbackInfo &info) {
-  Promise::Deferred deferred = Promise::Deferred::New(info.Env());
-  
-  
+Value Wrapper::ReadStringSync(const CallbackInfo &info) {
+  Env env = info.Env();
+  bool timedOut;
+  int length = dw->Read(&buffer, BUFFER_SIZE, &timedOut);
 
-  return deferred.Promise();
+  if (timedOut) {
+    return Value::From(env, NULL);
+  }
+  else {
+    return String::New(env, buffer, length);
+  }
 }
