@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include <windows.h>
 #include "ductwork.h"
 
@@ -19,14 +21,14 @@ const SECURITY_ATTRIBUTES SECURITY_ATTRS = {
   TRUE
 };
 
-Ductwork::Ductwork(Napi env, string path) : DwBase(env, path) { }
+Ductwork::Ductwork(Env env, string path) : DwBase(env, path) { }
 
 string Ductwork::Create() {
   std::string actualPath(PATH_PREFIX);
   actualPath += path;
 
   HANDLE handle = CreateNamedPipe(
-    path.c_str(),
+    path.c_str(), // LPTSTR
     OPEN_MODE,
     PIPE_MODE,
     MAX_INSTANCES,
@@ -59,3 +61,5 @@ string Ductwork::Create() {
 
   return message.c_str();
 }
+
+#endif

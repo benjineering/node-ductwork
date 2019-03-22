@@ -1,3 +1,5 @@
+#ifndef _WIN32
+
 #include "../dw_base.h"
 #include <napi.h>
 
@@ -8,3 +10,5 @@ namespace Nix {
     std::string Create();
   };
 }
+
+#endif

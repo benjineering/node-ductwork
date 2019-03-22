@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include "../dw_base.h"
 #include <napi.h>
 
@@ -8,3 +10,5 @@ namespace Win {
     std::string Create();
   };
 }
+
+#endif
