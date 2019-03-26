@@ -25,20 +25,21 @@ using Napi::Number;
 Ductwork *dw;
 const size_t BUFFER_SIZE = 512;
 char *buffer = (char *)malloc(BUFFER_SIZE);
+Promise::Deferred *deferredRead;
+Env *oneEnv;
 
 Object Wrapper::Init(Env env, Object exports) {
   exports.Set("create", Function::New(env, Create));
-  exports.Set("readStringSync", Function::New(env, ReadStringSync));
+  exports.Set("readString", Function::New(env, ReadString));
   return exports;
 }
 
 String Wrapper::Create(const CallbackInfo &info) {
   Env env = info.Env();
 
-  if (info.Length() != 1 || !info[0].IsString()) {
+  if (info.Length() != 1 || !info[0].IsString())
     TypeError::New(env, "A single string was expected")
       .ThrowAsJavaScriptException();
-  }
 
   String nPath = info[0].As<String>();
   std::string path = std::string(nPath);
@@ -49,15 +50,17 @@ String Wrapper::Create(const CallbackInfo &info) {
   return String::New(env, actualPath);
 }
 
-Value Wrapper::ReadStringSync(const CallbackInfo &info) {
-  Env env = info.Env();
-  bool timedOut;
-  int length = dw->Read(&buffer, BUFFER_SIZE, &timedOut);
-
-  if (timedOut) {
-    return Value::From(env, NULL);
-  }
-  else {
-    return String::New(env, buffer, length);
-  }
+void ReadCallback(int len, bool timeout) {
+  if (timeout)
+    deferredRead->Reject(Value::From(*oneEnv, "Timed out"));
+  else
+    deferredRead->Resolve(Value::From(*oneEnv, "promise is working"));
 }
+
+Value Wrapper::ReadString(const CallbackInfo &info) {
+  *oneEnv = info.Env();
+  deferredRead = new Promise::Deferred(*oneEnv);
+  dw->Read(&buffer, BUFFER_SIZE, ReadCallback);
+  return deferredRead->Promise();
+}
+

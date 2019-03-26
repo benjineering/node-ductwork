@@ -8,6 +8,8 @@
 using Napi::Env;
 using std::string;
 using std::setlocale;
+using std::function;
+
 using namespace Win;
 
 const char *PATH_PREFIX = "//./pipe";
@@ -75,7 +77,7 @@ string Ductwork::Create() {
   return actualPath.c_str();
 }
 
-Napi::Promise Ductwork::Read(char **buffer, size_t bufferSize, bool *timedOut) {
+void Ductwork::Read(char **buffer, size_t length, std::function<void(int len, bool timeout)> callback) {
   
 }
 

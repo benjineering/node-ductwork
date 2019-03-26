@@ -17,10 +17,42 @@ const mode_t CREATE_PERMS = S_IRUSR | S_IWUSR;
 const mode_t READ_PERMS = S_IRUSR | O_RDONLY;
 const mode_t WRITE_PERMS = S_IWUSR | O_WRONLY;
 
-Ductwork::Ductwork(Env env, string path) 
-: DwBase(env, path) {
+string OpenAsync(
+  const char *path,
+  char **buffer,
+  size_t length,
+  void (*callback)(int len, bool timeout)
+) {
+  printf("open started\n");
+
+  int fd = open(path, READ_PERMS);
+
+  printf("open done\n");
+
+  if (fd < 0)
+    return "Error opening file";
+
+  size_t readResult = read(fd, *buffer, length);
+
+  printf("read done\n");
+
+  if (!readResult)
+    return "Error reading file";
+
+  close(fd);
   fd = 0;
+    
+  printf("file closed");
+
+  (*callback)(readResult, false);
+
+  printf("callback called");
+
+  return "";
 }
+
+Ductwork::Ductwork(Env env, string path) 
+: DwBase(env, path) { }
 
 string Ductwork::Create() {
   int result = mkfifo(path.c_str(), CREATE_PERMS);
@@ -31,33 +63,21 @@ string Ductwork::Create() {
   return path;
 }
 
-Promise Ductwork::Read(char **buffer, size_t bufferSize, bool *timedOut) {
-  promise = new Promise::Deferred(env);
-  *timedOut = false;
+void Ductwork::Read(
+  char **buffer,
+  size_t length,
+  void (*callback)(int len, bool timeout)
+) {
 
-  if (fd) {
-    throwError("File already open");
-  }
+  printf("about to thread it up");
 
-  printf("open started\n");
-
-  printf("open done\n");
-
-  if (fd < 0) {
-    throwError("Error opening file");
-  }
-
-  size_t readResult = read(fd, *buffer, bufferSize);
-
-  printf("read done\n");
-
-  if (!readResult) {
-    throwError("Error reading file");
-  }
-
-  close(fd);
-  fd = 0;
-  return readResult;
+  openThread = new thread(
+    OpenAsync,
+    path.c_str(),
+    buffer,
+    length,
+    callback
+  );
 }
 
 #endif
