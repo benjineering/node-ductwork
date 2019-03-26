@@ -58,20 +58,8 @@ void ReadCallback(int len, bool timeout) {
 }
 
 Value Wrapper::ReadString(const CallbackInfo &info) {
-
-  printf("read string started");
-
   oneEnv = info.Env();
-
-  printf("env referenced");
-
   deferredRead = new Promise::Deferred(oneEnv);
-
-  printf("deferred created");
-
   dw->Read(&buffer, BUFFER_SIZE, ReadCallback);
-
-  printf("dw read called");
-
   return deferredRead->Promise();
 }
