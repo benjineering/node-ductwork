@@ -1,5 +1,8 @@
 #ifdef _WIN32
 
+#ifndef WIN_DW
+#define WIN_DW
+
 #include "../dw_base.h"
 #include <napi.h>
 
@@ -12,4 +15,5 @@ namespace Win {
   };
 }
 
+#endif
 #endif
