@@ -26,7 +26,7 @@ Ductwork *dw;
 const size_t BUFFER_SIZE = 512;
 char *buffer = (char *)malloc(BUFFER_SIZE);
 Promise::Deferred *deferredRead;
-Env *oneEnv;
+Env oneEnv(NULL);
 
 Object Wrapper::Init(Env env, Object exports) {
   exports.Set("create", Function::New(env, Create));
@@ -52,15 +52,26 @@ String Wrapper::Create(const CallbackInfo &info) {
 
 void ReadCallback(int len, bool timeout) {
   if (timeout)
-    deferredRead->Reject(Value::From(*oneEnv, "Timed out"));
+    deferredRead->Reject(Value::From(oneEnv, "Timed out"));
   else
-    deferredRead->Resolve(Value::From(*oneEnv, "promise is working"));
+    deferredRead->Resolve(Value::From(oneEnv, "promise is working"));
 }
 
 Value Wrapper::ReadString(const CallbackInfo &info) {
-  *oneEnv = info.Env();
-  deferredRead = new Promise::Deferred(*oneEnv);
+
+  printf("read string started");
+
+  oneEnv = info.Env();
+
+  printf("env referenced");
+
+  deferredRead = new Promise::Deferred(oneEnv);
+
+  printf("deferred created");
+
   dw->Read(&buffer, BUFFER_SIZE, ReadCallback);
+
+  printf("dw read called");
+
   return deferredRead->Promise();
 }
-
