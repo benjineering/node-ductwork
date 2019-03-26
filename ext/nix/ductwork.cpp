@@ -72,8 +72,6 @@ void Ductwork::Read(
     length,
     callback
   );
-
-  openThread->join();
 }
 
 #endif

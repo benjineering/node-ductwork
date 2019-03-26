@@ -5,6 +5,8 @@ chai = require 'chai'
 
 chai.should()
 
+# TODO: context() should work?
+
 describe 'Ductwork', ->
 
   # Windows should prepend "//./pipes" to this
@@ -23,5 +25,13 @@ describe 'Ductwork', ->
   describe '#readString()', ->
     beforeEach -> actualPath = dw.create desiredPath
 
-    it 'should return a promise', ->
-      dw.readString().should.be.a 'Promise'
+    it 'should all be pretty much A-OK', ->
+      message = 'p00tsy'
+      promise = dw.readString()
+      promise.should.be.a 'Promise'
+###
+      promise.then (result) -> 
+        result.should.equal 'promise is working'
+
+      fs.writeFile actualPath, message
+###
