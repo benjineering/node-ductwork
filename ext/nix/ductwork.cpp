@@ -42,12 +42,9 @@ string OpenAsync(
   close(fd);
   fd = 0;
     
-  printf("file closed");
+  printf("file closed\n");
 
   (*callback)(readResult, false);
-
-  printf("callback called");
-
   return "";
 }
 
@@ -68,9 +65,6 @@ void Ductwork::Read(
   size_t length,
   void (*callback)(int len, bool timeout)
 ) {
-
-  printf("about to thread it up");
-
   openThread = new thread(
     OpenAsync,
     path.c_str(),
