@@ -19,7 +19,7 @@ const DWORD IN_SIZE = 512;
 const DWORD TIMEOUT_MS = 2000; // 2 secs
 
 string OpenAsync(
-  const char *path,
+  HANDLE handle,
   char **buffer,
   size_t length,
   void (*callback)(int len, bool timeout)
@@ -27,25 +27,23 @@ string OpenAsync(
   DWORD readResult;
   bool timeout = false;
 
-  bool success = CallNamedPipeA(
-    path,
-    NULL,
-    0,
-    buffer,
-    length,
-    &readResult,
-    NMPWAIT_USE_DEFAULT_WAIT
-  );
+  bool success = ConnectNamedPipe(handle, NULL);
 
   if (!success) {
     DWORD error = GetLastError();
 
     if (error == ERROR_SEM_TIMEOUT)
       timeout = true;
+    else if (error == ERROR_PIPE_CONNECTED )
+      success = true;
     //else TODO: throw error
   }
 
-  (*callback)(readResult, success);
+  if (success) {
+    // TODO: read from handle
+  }
+
+  (*callback)(readResult, timeout);
   return "";
 }
 
@@ -55,7 +53,7 @@ string Ductwork::Create() {
   fullPath = string(PATH_PREFIX);
   fullPath += path;
 
-  HANDLE handle = CreateNamedPipeA(
+  handle = CreateNamedPipeA(
     fullPath.c_str(),
     OPEN_MODE,
     PIPE_MODE,
@@ -91,14 +89,30 @@ string Ductwork::Create() {
   return fullPath.c_str();
 }
 
-void Ductwork::Read(char **buffer, size_t length, void (*callback)(int len, bool timeout)) {
+void Ductwork::Read(
+  char **buffer, 
+  size_t length, 
+  void (*callback)(int len, bool timeout)
+) {
   openThread = new thread(
     OpenAsync,
-    fullPath.c_str(),
+    handle,
     buffer,
     length,
     callback
   );
 }
+
+/* for writing:
+  bool success = CallNamedPipeA(
+    path,
+    NULL,
+    0,
+    buffer,
+    length,
+    &readResult,
+    NMPWAIT_USE_DEFAULT_WAIT
+  );
+*/
 
 #endif

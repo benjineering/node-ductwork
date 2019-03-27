@@ -13,10 +13,14 @@ namespace Win {
   public:
     Ductwork(Napi::Env env, std::string path);
     std::string Create();
-    void Read(char **buffer, size_t length, void (*callback)(int len, bool timeout));
+    void Read(
+      char **buffer, 
+      size_t length, 
+      void (*callback)(int len, bool timeout));
   private:
     std::thread *openThread;
     std::string fullPath;
+    HANDLE handle;
   };
 }
 
