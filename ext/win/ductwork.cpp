@@ -19,7 +19,7 @@ const DWORD IN_SIZE = 512;
 const DWORD TIMEOUT_MS = 2000; // 2 secs
 
 string OpenAsync(
-  LPTSTR path,
+  const char *path,
   char **buffer,
   size_t length,
   void (*callback)(int len, bool timeout)
@@ -27,7 +27,7 @@ string OpenAsync(
   DWORD readResult;
   bool timeout = false;
 
-  bool success = CallNamedPipe(
+  bool success = CallNamedPipeA(
     path,
     NULL,
     0,
@@ -52,16 +52,11 @@ string OpenAsync(
 Ductwork::Ductwork(Env env, string path) : DwBase(env, path) { }
 
 string Ductwork::Create() {
-  std::string actualPath(PATH_PREFIX);
-  actualPath += path;
+  fullPath = string(PATH_PREFIX);
+  fullPath += path;
 
-  setlocale(LC_ALL, "en_US.utf8"); // TODO: get locale 
-  size_t pathLen = actualPath.size() + 1;
-  widePath = (LPTSTR)malloc(sizeof(TCHAR) * pathLen);
-  mbstowcs((wchar_t *)widePath, actualPath.c_str(), pathLen);
-
-  HANDLE handle = CreateNamedPipe(
-    widePath,
+  HANDLE handle = CreateNamedPipeA(
+    fullPath.c_str(),
     OPEN_MODE,
     PIPE_MODE,
     MAX_INSTANCES,
@@ -88,18 +83,18 @@ string Ductwork::Create() {
     );
 
     // TODO: throw error
-    printf("Couldn't create named pipe '%ls': %s", widePath, (char *)errorText);
+    printf("Couldn't create named pipe '%s': %s", fullPath, (char *)errorText);
 
     free(errorText);
   }
 
-  return actualPath.c_str();
+  return fullPath.c_str();
 }
 
 void Ductwork::Read(char **buffer, size_t length, void (*callback)(int len, bool timeout)) {
   openThread = new thread(
     OpenAsync,
-    widePath,
+    fullPath.c_str(),
     buffer,
     length,
     callback

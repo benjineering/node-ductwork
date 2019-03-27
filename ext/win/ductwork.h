@@ -16,7 +16,7 @@ namespace Win {
     void Read(char **buffer, size_t length, void (*callback)(int len, bool timeout));
   private:
     std::thread *openThread;
-    LPTSTR widePath; // TODO: free me
+    std::string fullPath;
   };
 }
 
