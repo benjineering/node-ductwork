@@ -5,13 +5,18 @@
 
 #include "../dw_base.h"
 #include <napi.h>
+#include <windows.h>
+#include <thread>
 
 namespace Win {
   class Ductwork : public DwBase {
   public:
     Ductwork(Napi::Env env, std::string path);
     std::string Create();
-    void Read(char **buffer, size_t length, std::function<void(int len, bool timeout)> callback);
+    void Read(char **buffer, size_t length, void (*callback)(int len, bool timeout));
+  private:
+    std::thread *openThread;
+    LPTSTR widePath; // TODO: free me
   };
 }
 
